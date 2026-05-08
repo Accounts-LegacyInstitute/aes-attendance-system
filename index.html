@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Attendance Session UI</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="container" id="mainContainer">
+    <!-- Content will be dynamically rendered by JavaScript -->
+  </div>
+
+  <!-- Passkey Modal Container -->
+  <div class="passkey-modal-overlay" id="passkeyModalOverlay">
+    <div class="passkey-modal" id="passkeyModal">
+      <div class="close-line" id="close-line"></div>
+      <!-- Content will be dynamically rendered -->
+    </div>
+  </div>
+
+  <!-- Google API for authentication -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
