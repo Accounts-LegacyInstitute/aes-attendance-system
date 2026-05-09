@@ -301,6 +301,7 @@ button {
   align-items: center;
   justify-content: center;
   width: 15px;
+  height: 5px;
   border: none;
   border-radius: 10px;
   background: #444444;
