@@ -2,7 +2,7 @@
 const GOOGLE_CLIENT_ID = '137477957854-prdi3poibskfgdi8kdcg2l2sae54e25b.apps.googleusercontent.com';
 // const REDIRECT_URI = 'https://127.0.0.1:3000/main.html';
 const REDIRECT_URI = 'https://accounts-legacyinstitute.github.io/aes-attendance-system/';
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx7N8Ot5llp2SIU4gdP5OqCjf8Bs9XNZ5Fb8XT4KGdlOPff7N0R1vGeUY8YJnIwsk8/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwaekBWrqCzV8_KnxrOwInPVWG-4CuTnxVGbP6VYoA9VvgRBfvF-Lh_84fefyiHALCA/exec';
 
 // State management
 let currentUser = null;
