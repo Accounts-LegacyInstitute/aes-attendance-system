@@ -10,7 +10,7 @@
 }
 
 body {
-  background: url('david-becker-mGx5-xt1uec-unsplash.jpg');
+  background: #e9e9e9;
   background-repeat: no-repeat;
   background-size: cover;
   display: flex;
@@ -55,7 +55,7 @@ body {
   font-family: var(--default-font);
   font-size: 48px;
   font-weight: 600;
-  color: #ffffff;
+  color: #464646;
   margin-bottom: 20px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
@@ -63,7 +63,7 @@ body {
 .login-screen .description {
   font-family: var(--default-font);
   font-size: 20px;
-  color: #f0f0f0;
+  color: #3e3e3e;
   margin-bottom: 15px;
   line-height: 1.5;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
@@ -72,7 +72,7 @@ body {
 .login-screen .sub-description {
   font-family: var(--default-font);
   font-size: 18px;
-  color: #e0e0e0;
+  color: #595959;
   margin-bottom: 40px;
   line-height: 1.5;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
@@ -147,7 +147,7 @@ body {
 
 .profile h2 {
   font-family: var(--default-font);
-  color: #ffffff;
+  color: #454545;
   margin-top: 10px;
   font-size: 32px;
   font-weight: 300;
@@ -157,7 +157,7 @@ body {
   font-family: var(--default-font);
   font-size: 22px;
   font-weight: 100;
-  color: #d4d4d4;
+  color: #757575;
 }
 
 /* Icons Row */
@@ -171,7 +171,6 @@ body {
 .icon-box {
   width: 50%;
   height: 85px;
-  background: #cfcfcf;
   border-radius: 25px;
   display: flex;
   align-items: center;
@@ -180,10 +179,10 @@ body {
   color: #4b4a4a;
   font-family: var(--default-font);
   gap: 5px;
-  border: 3px solid hsl(0, 0%, 100%, 0.3);
-  background: hsl(0, 0%, 100%, 0.1);
+  border: 3px solid hsl(0deg 0% 41.56% / 30%);
+  background: hsl(0deg 0% 0% / 10%);
   backdrop-filter: blur(2px);
-  box-shadow: inset 0 0 8px 1px hsl(0, 0%, 100%, 0.5);
+  box-shadow: inset 0 0 8px 1px hsl(0deg 0% 55.44% / 50%);
   cursor: pointer;
 }
 
@@ -200,7 +199,7 @@ body {
 /* Session Info */
 .session-info h4 {
   font-family: var(--default-font);
-  color: #ffffff;
+  color: #262626;
   margin-bottom: 0px;
   font-size: 20px;
   font-weight: 500;
@@ -209,7 +208,7 @@ body {
 .session-info p {
   font-family: var(--default-font);
   font-size: 16px;
-  color: #e6e6e6;
+  color: #3e3e3e;
   margin-bottom: 20px;
 }
 
