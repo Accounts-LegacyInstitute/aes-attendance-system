@@ -59,13 +59,13 @@ async function initApp() {
         hideLoadingScreen();
         const errorMsg = staffResult?.error || 'You are not authorized to access this system.';
         console.error('Staff verification failed:', errorMsg);
-        alert(errorMsg + ' Please contact your administrator.');
+        showNotification('Not a Verified Staff at The Legacy Institute', 'error', 'Error');
         logout();
       }
     } catch (error) {
       console.error('Staff verification error:', error);
       hideLoadingScreen();
-      alert('Failed to verify staff credentials. Please try again.');
+      showNotification('Failed to verify staff credentials', 'error', 'Error');
       logout();
     }
   } else {
@@ -179,16 +179,32 @@ async function fetchSessionStatus() {
   if (!staffData || !staffData.name) return;
 
   try {
-    const url = `${APPS_SCRIPT_URL}?action=checkSession&name=${encodeURIComponent(staffData.name)}`;
-    const response = await fetch(url);
+    const response = await fetch(`${APPS_SCRIPT_URL}?action=checkSession&name=${encodeURIComponent(staffData.name)}`);
     const result = await response.json();
-
-    console.log('Session check:', result);
 
     if (result.success) {
       sessionActive = result.hasActiveSession === true;
       currentSession = result.activeSessionNumber || result.completedSessions || 0;
       updateButtonStates();
+
+      // Check if there's an active session
+      if (sessionActive) {
+        const element = document.getElementById('lastSession');
+        if (element) {
+          // Fetch active session details
+          const activeSessionUrl = `${APPS_SCRIPT_URL}?action=getActiveSession&name=${encodeURIComponent(staffData.name)}`;
+          const activeRes = await fetch(activeSessionUrl);
+          const activeResult = await activeRes.json();
+
+          if (activeResult.success && activeResult.activeSession) {
+            element.textContent = `Active Session from ${activeResult.activeSession.timeIn}`;
+          } else {
+            element.textContent = 'Active session in progress';
+          }
+        }
+      } else {
+        await fetchLastSession();
+      }
     }
   } catch (error) {
     console.error('Session check failed:', error);
@@ -222,14 +238,14 @@ async function startNewSession() {
       currentSession = result.sessionNumber;
       updateButtonStates();
       updateLastSessionDisplay();
-      showNotification(`Session ${result.sessionNumber} started at ${result.timeIn}`, 'success');
+      showNotification(`Session ${result.session} started at ${result.timeIn}`, 'success', 'Session Started');
     } else {
-      showNotification(result.error || 'Failed to start', 'error');
+      showNotification(result.error || 'Failed to start session', 'error', 'Error');
       fetchSessionStatus();
     }
   } catch (error) {
     console.error('Start error:', error);
-    showNotification('Connection error', 'error');
+    showNotification('Connection error', 'error', 'Connection Error');
   } finally {
     updateButtonStates();
   }
@@ -261,7 +277,7 @@ async function endCurrentSession() {
       sessionActive = false;
       updateButtonStates();
       updateLastSessionDisplay();
-      showNotification(`Session ${result.sessionNumber} ended (${result.duration})`, 'success');
+      showNotification(`Session ${result.session} ended at ${result.timeOut} (${result.duration})`, 'success', 'Session Ended');
     } else {
       showNotification(result.error || 'Failed to end', 'error');
       fetchSessionStatus();
@@ -288,12 +304,17 @@ async function fetchLastSession() {
 
     if (result.success && result.lastSession) {
       const s = result.lastSession;
-      element.textContent = `${s.timeIn} - ${s.timeOut} ${s.date} (Session ${s.sessionNumber}, ${s.duration})`;
+      const dateObj = new Date(s.date);
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const formattedDate = dateObj.toLocaleDateString('en-US', options);
+      element.textContent = `${formattedDate} From ${s.timeIn} To ${s.timeOut}`;
     } else {
       element.textContent = 'No previous session recorded';
     }
   } catch (error) {
     console.error('Error fetching last session:', error);
+    const element = document.getElementById('lastSession');
+    if (element) element.textContent = 'Unable to load session data';
   }
 }
 
@@ -331,25 +352,7 @@ function updateButtonStates() {
 
 // Update last session display
 async function updateLastSessionDisplay() {
-  if (!staffData || !staffData.name) return;
-
-  try {
-    const url = `${APPS_SCRIPT_URL}?action=getLastSession&name=${encodeURIComponent(staffData.name)}`;
-    const response = await fetch(url);
-    const result = await response.json();
-
-    const el = document.getElementById('lastSession');
-    if (!el) return;
-
-    if (result.success && result.lastSession) {
-      const s = result.lastSession;
-      el.textContent = `${s.timeIn} - ${s.timeOut} ${s.date} (Session ${s.sessionNumber}, ${s.duration})`;
-    } else {
-      el.textContent = 'No previous session recorded';
-    }
-  } catch (error) {
-    console.error('Last session error:', error);
-  }
+  await fetchLastSession();
 }
 
 // Show notification
@@ -393,7 +396,11 @@ function showLoadingState(buttonType) {
   if (btn) {
     btn.disabled = true;
     btn.style.opacity = '0.7';
-    btn.innerHTML = '<div class="loading-spinner"></div> Processing...';
+    if (buttonType === 'start') {
+      btn.innerHTML = '<span class="loading-spinner"></span> Starting Session...';
+    } else {
+      btn.innerHTML = '<span class="loading-spinner"></span> Ending Session...';
+    }
   }
 }
 
@@ -1002,12 +1009,12 @@ function renderDashboardScreen() {
                 <p id="userEmail">${staffEmail}</p>
             </div>
 
-            <div class="icon-row">
-                <div class="icon-box" id="logoutBtn"><i class='bx bx-log-out'></i><text>Logout</text></div>
-                <div class="icon-box" id="recentLogBtn"><i class='ri-information-line'></i><text>Recent Log</text></div>
-                <div class="icon-box" id="myActivityBtn"><i class='ri-shield-user-line'></i><text>My Activity</text></div>
-                <div class="icon-box"><i class='ri-google-fill'></i><text>Ask Google</text></div>
-            </div>
+          <div class="icon-row">
+            <div class="icon-box" id="logoutBtn"><i class='bx bx-log-out'></i><text>Logout</text></div>
+            <div class="icon-box" id="recentLogBtn"><i class='ri-information-line'></i><text>Recent Log</text></div>
+            <div class="icon-box" id="myActivityBtn"><i class='ri-shield-user-line'></i><text>My Activity</text></div>
+            <div class="icon-box" id="myAccountBtn"><i class='ri-google-fill'></i><text>My Account</text></div>
+          </div>
 
             <div class="session-info">
                 <h4>Last Session</h4>
@@ -1047,24 +1054,26 @@ function setupDashboardEventListeners() {
   const startBtn = document.getElementById('startSessionBtn');
   const endBtn = document.getElementById('endSessionBtn');
 
-  if (startBtn) {
-    startBtn.addEventListener('click', startNewSession);
-  }
+  if (startBtn) startBtn.addEventListener('click', startNewSession);
+  if (endBtn) endBtn.addEventListener('click', endCurrentSession);
 
-  if (endBtn) {
-    endBtn.addEventListener('click', endCurrentSession);
-  }
-
-  // Recent log button
   const recentLogBtn = document.getElementById('recentLogBtn');
   if (recentLogBtn) {
     recentLogBtn.addEventListener('click', showRecentSessions);
   }
 
-  // My activity button
   const myActivityBtn = document.getElementById('myActivityBtn');
   if (myActivityBtn) {
-    myActivityBtn.addEventListener('click', showMyActivity);
+    myActivityBtn.addEventListener('click', () => {
+      window.open('https://myactivity.google.com/myactivity?hl=en&utm_source=google-account&utm_medium=web&pli=1', '_blank');
+    });
+  }
+
+  const myAccountBtn = document.getElementById('myAccountBtn');
+  if (myAccountBtn) {
+    myAccountBtn.addEventListener('click', () => {
+      window.open('https://myaccount.google.com/?utm_source=OGB&utm_medium=app', '_blank');
+    });
   }
 }
 
@@ -1173,12 +1182,12 @@ async function handleAuthResponse(hash) {
       await initApp();
     } catch (error) {
       console.error('Error fetching user info:', error);
-      alert('Authentication failed. Please try again.');
+      showNotification('Authentication failed. Please try again later.', 'error', 'Authentication failed');
       renderApp();
     }
   } else {
     console.error('No access token in response');
-    alert('Authentication failed. No access token received.');
+    showNotification('Authentication failed. Please try again later.', 'error', 'Authentication failed');
     renderApp();
   }
 }
@@ -1231,25 +1240,117 @@ if (window.opener) {
 
 // Show recent sessions popup
 async function showRecentSessions() {
+  if (!staffData || !staffData.name) return;
+
   try {
-    const response = await fetch(`${APPS_SCRIPT_URL}?action=getSessionHistory&name=${encodeURIComponent(staffData.name)}&limit=5`);
+    const response = await fetch(`${APPS_SCRIPT_URL}?action=getSessionHistory&name=${encodeURIComponent(staffData.name)}&limit=20`);
     const result = await response.json();
 
-    if (result.success && result.sessions.length > 0) {
-      let sessionsHtml = result.sessions.map(session =>
-        `<div style="margin-bottom: 10px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
-                    <strong>${session.date}</strong> - Session ${session.sessionNumber}<br>
-                    ${session.timeIn} - ${session.timeOut} (${session.duration})
-                </div>`
-      ).join('');
-
-      showPopup('Recent Sessions', sessionsHtml);
-    } else {
-      showPopup('Recent Sessions', 'No previous sessions found');
-    }
+    showSessionModal(result);
   } catch (error) {
-    console.error('Failed to fetch sessions:', error);
+    showCustomModal('Recent Sessions', '<p style="text-align:center;color:#64748b;">Failed to load sessions. Please try again.</p>');
   }
+}
+
+function showSessionModal(result) {
+  const overlay = document.createElement('div');
+  overlay.className = 'custom-modal-overlay';
+  overlay.style.cssText = `
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999; animation: fadeIn 0.3s ease;
+  `;
+
+  let sessionsHtml = '';
+
+  if (result.success && result.sessions && result.sessions.length > 0) {
+    sessionsHtml = `
+      <div style="max-height: 400px; overflow-y: auto; margin: 15px 0;">
+        <table style="width:100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background: #f1f5f9;">
+              <th style="padding: 10px; text-align: left; font-size: 13px; color: #475569; border-bottom: 2px solid #e2e8f0;">Date</th>
+              <th style="padding: 10px; text-align: left; font-size: 13px; color: #475569; border-bottom: 2px solid #e2e8f0;">Session</th>
+              <th style="padding: 10px; text-align: left; font-size: 13px; color: #475569; border-bottom: 2px solid #e2e8f0;">Time In</th>
+              <th style="padding: 10px; text-align: left; font-size: 13px; color: #475569; border-bottom: 2px solid #e2e8f0;">Time Out</th>
+              <th style="padding: 10px; text-align: left; font-size: 13px; color: #475569; border-bottom: 2px solid #e2e8f0;">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${result.sessions.map((s, idx) => `
+              <tr style="${idx % 2 === 0 ? 'background: #ffffff;' : 'background: #f8fafc;'}">
+                <td style="padding: 10px; font-size: 14px; color: #1e293b; border-bottom: 1px solid #e2e8f0;">${s.date}</td>
+                <td style="padding: 10px; font-size: 14px; color: #1e293b; border-bottom: 1px solid #e2e8f0;">Session ${s.sessionNumber}</td>
+                <td style="padding: 10px; font-size: 14px; color: #0f9d58; border-bottom: 1px solid #e2e8f0; font-weight: 600;">${s.timeIn}</td>
+                <td style="padding: 10px; font-size: 14px; color: #ea4335; border-bottom: 1px solid #e2e8f0; font-weight: 600;">${s.timeOut}</td>
+                <td style="padding: 10px; font-size: 14px; color: #1a73e8; border-bottom: 1px solid #e2e8f0; font-weight: 600;">${s.duration || 'N/A'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } else {
+    sessionsHtml = `
+      <div style="text-align: center; padding: 30px;">
+        <i class='bx bx-folder-open' style="font-size: 50px; color: #94a3b8; margin-bottom: 10px;"></i>
+        <p style="color: #64748b; font-size: 15px;">No previous sessions found</p>
+      </div>
+    `;
+  }
+
+  overlay.innerHTML = `
+    <div style="background: white; border-radius: 20px; padding: 25px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; animation: slideUpModal 0.3s ease;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="font-family: var(--default-font); font-size: 20px; color: #1e293b;">
+          <i class='bx bx-history' style="color: #1a73e8; margin-right: 6px; vertical-align: middle;"></i>
+          Recent Sessions
+        </h3>
+        <button onclick="this.closest('.custom-modal-overlay').remove()" style="background: #f1f5f9; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 18px; color: #64748b; display: flex; align-items: center; justify-content: center;">
+          <i class='bx bx-x'></i>
+        </button>
+      </div>
+      ${sessionsHtml}
+      <div style="text-align: center; margin-top: 15px;">
+        <button onclick="this.closest('.custom-modal-overlay').remove()" style="background: #1a73e8; color: white; border: none; padding: 10px 30px; border-radius: 10px; font-size: 14px; cursor: pointer; font-family: var(--default-font);">Close</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // Close on overlay click
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) {
+      overlay.remove();
+    }
+  });
+}
+
+function showCustomModal(title, contentHtml) {
+  const overlay = document.createElement('div');
+  overlay.className = 'custom-modal-overlay';
+  overlay.style.cssText = `
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999;
+  `;
+
+  overlay.innerHTML = `
+    <div style="background: white; border-radius: 20px; padding: 25px; max-width: 400px; width: 90%; text-align: center;">
+      <h3 style="font-family: var(--default-font); font-size: 18px; color: #1e293b; margin-bottom: 15px;">${title}</h3>
+      ${contentHtml}
+      <button onclick="this.closest('.custom-modal-overlay').remove()" style="background: #1a73e8; color: white; border: none; padding: 10px 30px; border-radius: 10px; font-size: 14px; cursor: pointer; margin-top: 15px; font-family: var(--default-font);">Close</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) overlay.remove();
+  });
 }
 
 // Show my activity popup
@@ -1304,4 +1405,51 @@ function showPopup(title, content) {
 
   document.body.appendChild(overlay);
   document.body.appendChild(popup);
+}
+
+function showNotification(message, type = 'info', title = '', duration = 5000) {
+  const existing = document.querySelectorAll('.custom-notification');
+  existing.forEach(n => n.remove());
+
+  const icons = {
+    success: 'bx-check-circle',
+    error: 'bx-x-circle',
+    info: 'bx-info-circle',
+    warning: 'bx-error-circle'
+  };
+
+  const titles = {
+    success: title || 'Success',
+    error: title || 'Error',
+    info: title || 'Information',
+    warning: title || 'Warning'
+  };
+
+  const notif = document.createElement('div');
+  notif.className = 'custom-notification ' + type;
+  notif.style.cssText = `
+    position: fixed; top: 20px; right: 20px; z-index: 10001;
+    background: white; border-radius: 12px; padding: 16px 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex; align-items: center; gap: 12px;
+    min-width: 300px; max-width: 450px;
+    animation: slideInRight 0.3s ease;
+    border-left: 4px solid ${type === 'success' ? '#8cb300' : type === 'error' ? '#ff1500' : type === 'warning' ? '#ffbb00' : '#0969e8'};
+  `;
+
+  notif.innerHTML = `
+    <i class='bx ${icons[type]}' style="font-size: 24px; color: ${type === 'success' ? '#0f9d58' : type === 'error' ? '#ea4335' : type === 'warning' ? '#f4b400' : '#1a73e8'};"></i>
+    <div style="flex: 1;">
+      <div style="font-weight: 600; font-size: 14px; color: #1e293b;">${titles[type]}</div>
+      <div style="font-size: 13px; color: #64748b; margin-top: 2px;">${message}</div>
+    </div>
+    <i class='bx bx-x' onclick="this.parentElement.remove()" style="cursor: pointer; color: #94a3b8; font-size: 18px;"></i>
+  `;
+
+  document.body.appendChild(notif);
+
+  setTimeout(() => {
+    notif.style.animation = 'slideOutRight 0.3s ease';
+    setTimeout(() => notif.remove(), 300);
+  }, duration);
 }

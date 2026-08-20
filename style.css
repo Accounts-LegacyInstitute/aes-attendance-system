@@ -10,7 +10,7 @@
 }
 
 body {
-  background: #e9e9e9;
+  background: linear-gradient(135deg, #8cb300 0%, #6d8b00 100%);
   background-repeat: no-repeat;
   background-size: cover;
   display: flex;
@@ -283,7 +283,7 @@ button {
 
 /* Passkey Modal - iPhone AirPods style */
 .passkey-modal {
-  background: rgba(255, 255, 255, 0.95);
+  background: #ffffff;
   backdrop-filter: blur(20px);
   border-radius: 32px;
   padding: 40px 30px;
@@ -546,6 +546,8 @@ button {
 
   .passkey-modal {
     bottom: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
     position: absolute;
     padding: 30px 20px;
     width: 100%;
@@ -694,6 +696,30 @@ button {
 
   to {
     transform: translateX(-50%) translateY(100px);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(400px);
     opacity: 0;
   }
 }
