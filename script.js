@@ -476,7 +476,7 @@ async function initiatePasskeyVerification() {
 
   // Update UI to loading state
   verifyBtn.disabled = true;
-  verifyBtn.innerHTML = '<div class="verification-spinner"></div> Verifying...';
+  verifyBtn.innerHTML = '<div class="verification-spinner" style="background: #007aff; color: white;border: none;padding: 16px 32px;border-radius: 16px;font-family: var(--default-font); font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; width: 100%; max-width: 300px; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);"></div> Verifying...';
   verificationIcon.className = 'bx bx-shield-quarter verification-icon';
 
   try {
