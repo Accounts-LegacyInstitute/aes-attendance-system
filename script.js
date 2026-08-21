@@ -148,8 +148,15 @@ async function verifyStaffMember() {
     const url = `${APPS_SCRIPT_URL}?action=verifyStaff&email=${encodeURIComponent(currentUser.email)}`;
     console.log('Verifying staff:', url);
 
-    const response = await fetch(url);
-    const result = await response.json();
+    const response = await fetch(url, {
+      method: 'GET',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'text/plain'
+      }
+    });
+
+    const result = await fetchWithJSONP(url);
     console.log('Verify result:', result);
 
     if (result.success && result.staff) {
@@ -163,6 +170,28 @@ async function verifyStaffMember() {
     console.error('Verification error:', error);
     return { success: false, error: 'Connection error' };
   }
+}
+
+function fetchWithJSONP(url) {
+  return new Promise((resolve, reject) => {
+    const callbackName = 'jsonp_callback_' + Date.now() + Math.random().toString(36).substr(2, 5);
+    const script = document.createElement('script');
+    
+    window[callbackName] = function(data) {
+      delete window[callbackName];
+      document.body.removeChild(script);
+      resolve(data);
+    };
+    
+    script.src = url + '&callback=' + callbackName;
+    script.onerror = function() {
+      delete window[callbackName];
+      document.body.removeChild(script);
+      reject(new Error('JSONP request failed'));
+    };
+    
+    document.body.appendChild(script);
+  });
 }
 
 // Get current session status from backend
