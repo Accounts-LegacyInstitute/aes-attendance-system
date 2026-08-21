@@ -216,36 +216,28 @@ async function startNewSession() {
   if (!staffData || !staffData.name) return;
 
   try {
-    const startBtn = document.getElementById('startSessionBtn');
-    if (startBtn) {
-      startBtn.disabled = true;
-      startBtn.innerHTML = 'Starting...';
-    }
+    showLoadingState('start');
 
-    const body = `action=startSession&name=${encodeURIComponent(staffData.name)}`;
+    const formData = new URLSearchParams();
+    formData.append('action', 'startSession');
+    formData.append('name', staffData.name);
 
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: body
-    });
-
+    const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData });
     const result = await response.json();
-    console.log('Start result:', result);
 
     if (result.success) {
       sessionActive = true;
       currentSession = result.sessionNumber;
       updateButtonStates();
-      updateLastSessionDisplay();
-      showNotification(`Session ${result.session} started at ${result.timeIn}`, 'success', 'Session Started');
+      await fetchLastSession();
+      const sessionNum = result.sessionNumber || result.session || 1;
+      showNotification(`Session ${sessionNum} started at ${result.timeIn}`, 'success', 'Session Started');
     } else {
       showNotification(result.error || 'Failed to start session', 'error', 'Error');
-      fetchSessionStatus();
+      await fetchSessionStatus();
     }
   } catch (error) {
-    console.error('Start error:', error);
-    showNotification('Connection error', 'error', 'Connection Error');
+    showNotification('Connection error', 'error');
   } finally {
     updateButtonStates();
   }
@@ -256,34 +248,26 @@ async function endCurrentSession() {
   if (!staffData || !staffData.name) return;
 
   try {
-    const endBtn = document.getElementById('endSessionBtn');
-    if (endBtn) {
-      endBtn.disabled = true;
-      endBtn.innerHTML = 'Ending...';
-    }
+    showLoadingState('end');
 
-    const body = `action=endSession&name=${encodeURIComponent(staffData.name)}`;
+    const formData = new URLSearchParams();
+    formData.append('action', 'endSession');
+    formData.append('name', staffData.name);
 
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: body
-    });
-
+    const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData });
     const result = await response.json();
-    console.log('End result:', result);
 
     if (result.success) {
       sessionActive = false;
       updateButtonStates();
-      updateLastSessionDisplay();
-      showNotification(`Session ${result.session} ended at ${result.timeOut} (${result.duration})`, 'success', 'Session Ended');
+      await fetchLastSession();
+      const sessionNum = result.sessionNumber || result.session || 1;
+      showNotification(`Session ${sessionNum} ended at ${result.timeOut} (${result.duration})`, 'success', 'Session Ended');
     } else {
-      showNotification(result.error || 'Failed to end', 'error');
-      fetchSessionStatus();
+      showNotification(result.error || 'Failed to end session', 'error', 'Error');
+      await fetchSessionStatus();
     }
   } catch (error) {
-    console.error('End error:', error);
     showNotification('Connection error', 'error');
   } finally {
     updateButtonStates();
@@ -295,8 +279,7 @@ async function fetchLastSession() {
   if (!staffData || !staffData.name) return;
 
   try {
-    const url = `${APPS_SCRIPT_URL}?action=getLastSession&name=${encodeURIComponent(staffData.name)}`;
-    const response = await fetch(url);
+    const response = await fetch(`${APPS_SCRIPT_URL}?action=getLastSession&name=${encodeURIComponent(staffData.name)}`);
     const result = await response.json();
 
     const element = document.getElementById('lastSession');
@@ -304,15 +287,11 @@ async function fetchLastSession() {
 
     if (result.success && result.lastSession) {
       const s = result.lastSession;
-      const dateObj = new Date(s.date);
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      const formattedDate = dateObj.toLocaleDateString('en-US', options);
-      element.textContent = `${formattedDate} From ${s.timeIn} To ${s.timeOut}`;
+      element.textContent = `${s.date} From ${s.timeIn} To ${s.timeOut}`;
     } else {
       element.textContent = 'No previous session recorded';
     }
   } catch (error) {
-    console.error('Error fetching last session:', error);
     const element = document.getElementById('lastSession');
     if (element) element.textContent = 'Unable to load session data';
   }
@@ -411,22 +390,30 @@ function hideLoadingState() {
 
 // Check if passkey is registered for this device
 function checkPasskeyRegistrationStatus() {
-  // Safety check
-  if (!isAuthenticated || !currentUser) {
-    console.error('Cannot check passkey: not authenticated');
-    return;
-  }
-
   const deviceId = getDeviceId();
   const passkeyRegistered = localStorage.getItem(`passkey_registered_${deviceId}`);
   const passkeyCredential = localStorage.getItem(`passkey_credential_${deviceId}`);
 
-  console.log('Passkey status:', { registered: !!passkeyRegistered, hasCredential: !!passkeyCredential });
-
   if (passkeyRegistered === 'true' && passkeyCredential) {
+    renderDashboardBehindModal();
     showPasskeyVerification();
   } else {
     showPasskeyRegistration();
+  }
+}
+
+async function renderDashboardBehindModal() {
+  const container = document.getElementById('mainContainer');
+
+  container.innerHTML = renderDashboardScreen();
+  updateTime();
+  setInterval(updateTime, 1000);
+  setupDashboardEventListeners();
+  try {
+    await fetchSessionStatus();
+    await fetchLastSession();
+  } catch (e) {
+    console.log('Data fetch behind modal:', e);
   }
 }
 
@@ -489,7 +476,7 @@ async function initiatePasskeyVerification() {
 
   // Update UI to loading state
   verifyBtn.disabled = true;
-  verifyBtn.innerHTML = '<div class="verification-spinner" style="width: 24px; height: 24px; border-width: 3px;"></div> Verifying...';
+  verifyBtn.innerHTML = '<div class="verification-spinner"></div> Verifying...';
   verificationIcon.className = 'bx bx-shield-quarter verification-icon';
 
   try {
@@ -552,30 +539,28 @@ function showVerificationSuccess() {
   const modal = document.getElementById('passkeyModal');
 
   modal.innerHTML = `
-        <div class="modal-content verification-modal">
-            <h2 class="modal-title" style="color: #34c759;">✓ Identity Verified</h2>
-            <p class="modal-description">Your identity has been successfully verified. Welcome back to the Attendance System.</p>
-            
-            <div class="animation-container">
-                <i class='bx bx-check-shield verification-icon success'></i>
-            </div>
-            
-            <button class="passkey-btn" id="continueToDashboardBtn">Continue to Dashboard</button>
-        </div>
-    `;
+    <div class="modal-content verification-modal">
+      <h2 class="modal-title" style="color: #8cb300;">✓ Identity Verified</h2>
+      <p class="modal-description">Your identity has been successfully verified. Welcome back to the Attendance System.</p>
+      <div class="animation-container">
+        <i class='bx bx-check-shield verification-icon success'></i>
+      </div>
+      <button class="passkey-btn" id="continueToDashboardBtn">Continue to Dashboard</button>
+    </div>
+  `;
 
-  document.getElementById('continueToDashboardBtn').addEventListener('click', async () => {
+  document.getElementById('continueToDashboardBtn').addEventListener('click', () => {
     isPasskeyVerified = true;
     document.getElementById('passkeyModalOverlay').classList.remove('active');
-    await renderApp();
+    // Dashboard is already rendered, just update buttons
+    updateButtonStates();
   });
 
-  // Auto continue after 1.5 seconds
-  setTimeout(async () => {
+  setTimeout(() => {
     if (document.getElementById('continueToDashboardBtn')) {
       isPasskeyVerified = true;
       document.getElementById('passkeyModalOverlay').classList.remove('active');
-      await renderApp();
+      updateButtonStates();
     }
   }, 1500);
 }
@@ -674,16 +659,16 @@ function handleSkipVerification() {
 
 // Show passkey registration modal (first time setup)
 function showPasskeyRegistration() {
+  // Show login screen behind registration modal
+  const container = document.getElementById('mainContainer');
+  container.innerHTML = renderLoginScreen();
+
   const overlay = document.getElementById('passkeyModalOverlay');
   const modal = document.getElementById('passkeyModal');
 
   modal.innerHTML = renderPasskeyRegistration();
   overlay.classList.add('active');
-
-  // Start GIF animation
   startGifAnimation();
-
-  // Setup event listeners
   setupPasskeyEventListeners();
 }
 
