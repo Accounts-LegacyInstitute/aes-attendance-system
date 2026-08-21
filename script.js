@@ -149,14 +149,13 @@ async function verifyStaffMember() {
     console.log('Verifying staff:', url);
 
     const response = await fetch(url, {
-      method: 'GET',
-      mode: 'no-cors',
+      mode: 'cors',
+      redirect: 'follow',
       headers: {
-        'Content-Type': 'text/plain'
+        'Accept': 'application/json'
       }
     });
-
-    const result = await fetchWithJSONP(url);
+    const result = await response.json();
     console.log('Verify result:', result);
 
     if (result.success && result.staff) {
@@ -172,34 +171,18 @@ async function verifyStaffMember() {
   }
 }
 
-function fetchWithJSONP(url) {
-  return new Promise((resolve, reject) => {
-    const callbackName = 'jsonp_callback_' + Date.now() + Math.random().toString(36).substr(2, 5);
-    const script = document.createElement('script');
-    
-    window[callbackName] = function(data) {
-      delete window[callbackName];
-      document.body.removeChild(script);
-      resolve(data);
-    };
-    
-    script.src = url + '&callback=' + callbackName;
-    script.onerror = function() {
-      delete window[callbackName];
-      document.body.removeChild(script);
-      reject(new Error('JSONP request failed'));
-    };
-    
-    document.body.appendChild(script);
-  });
-}
-
 // Get current session status from backend
 async function fetchSessionStatus() {
   if (!staffData || !staffData.name) return;
 
   try {
-    const response = await fetch(`${APPS_SCRIPT_URL}?action=checkSession&name=${encodeURIComponent(staffData.name)}`);
+    const response = await fetch(url, {
+      mode: 'cors',
+      redirect: 'follow',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
     const result = await response.json();
 
     if (result.success) {
@@ -242,7 +225,12 @@ async function startNewSession() {
     formData.append('action', 'startSession');
     formData.append('name', staffData.name);
 
-    const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData });
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: formData,
+      mode: 'cors',
+      redirect: 'follow'
+    });
     const result = await response.json();
 
     if (result.success) {
@@ -274,7 +262,12 @@ async function endCurrentSession() {
     formData.append('action', 'endSession');
     formData.append('name', staffData.name);
 
-    const response = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData });
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: formData,
+      mode: 'cors',
+      redirect: 'follow'
+    });
     const result = await response.json();
 
     if (result.success) {
@@ -299,7 +292,13 @@ async function fetchLastSession() {
   if (!staffData || !staffData.name) return;
 
   try {
-    const response = await fetch(`${APPS_SCRIPT_URL}?action=getLastSession&name=${encodeURIComponent(staffData.name)}`);
+    const response = await fetch(url, {
+      mode: 'cors',
+      redirect: 'follow',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
     const result = await response.json();
 
     const element = document.getElementById('lastSession');
