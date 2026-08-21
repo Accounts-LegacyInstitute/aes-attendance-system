@@ -141,36 +141,27 @@ function hideLoadingScreen() {
 async function verifyStaffMember() {
   try {
     if (!currentUser || !currentUser.email) {
-      console.error('No current user or email');
-      return { success: false, error: 'No user data available' };
+      console.error('No current user');
+      return { success: false, error: 'No user data' };
     }
 
-    const token = localStorage.getItem('google_token');
-    const url = `${APPS_SCRIPT_URL}?action=verifyStaff&email=${encodeURIComponent(currentUser.email)}${token ? '&idToken=' + encodeURIComponent(token) : ''}`;
-
-    console.log('Verifying staff at:', url);
+    const url = `${APPS_SCRIPT_URL}?action=verifyStaff&email=${encodeURIComponent(currentUser.email)}`;
+    console.log('Verifying staff:', url);
 
     const response = await fetch(url);
+    const result = await response.json();
+    console.log('Verify result:', result);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (result.success && result.staff) {
+      staffData = result.staff;
+      console.log('Staff data set:', staffData);
+      return result;
     }
 
-    const result = await response.json();
-    console.log('Staff verification response:', result);
-
-    return result;
+    return { success: false, error: result.error || 'Not verified' };
   } catch (error) {
-    console.error('Staff verification failed:', error);
-    // Return a fallback result for testing if needed
-    return {
-      success: true,
-      staff: {
-        name: currentUser.name || 'User',
-        email: currentUser.email,
-        rowIndex: 1
-      }
-    };
+    console.error('Verification error:', error);
+    return { success: false, error: 'Connection error' };
   }
 }
 
