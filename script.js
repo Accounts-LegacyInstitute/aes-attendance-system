@@ -166,35 +166,38 @@ async function verifyStaffMember() {
 
 function fetchWithJSONP(url) {
   return new Promise((resolve, reject) => {
-    const callbackName = 'jsonp_callback_' + Date.now() + Math.random().toString(36).substr(2, 5);
+    const callbackName = 'jsonp_callback_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
     const script = document.createElement('script');
 
-    // Add timeout
-    const timeout = setTimeout(() => {
-      delete window[callbackName];
-      if (script.parentNode) script.parentNode.removeChild(script);
+    const timeoutId = setTimeout(() => {
+      cleanup();
       reject(new Error('JSONP request timeout'));
     }, 15000);
 
-    window[callbackName] = function (data) {
-      clearTimeout(timeout);
+    function cleanup() {
+      clearTimeout(timeoutId);
       delete window[callbackName];
-      if (script.parentNode) script.parentNode.removeChild(script);
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    }
+
+    window[callbackName] = function (data) {
+      cleanup();
       resolve(data);
     };
 
-    // Check if URL already has query parameters
-    const separator = url.includes('?') ? '&' : '?';
-    script.src = url + separator + 'callback=' + callbackName;
-
     script.onerror = function () {
-      clearTimeout(timeout);
-      delete window[callbackName];
-      if (script.parentNode) script.parentNode.removeChild(script);
+      cleanup();
       reject(new Error('JSONP request failed'));
     };
 
+    const separator = url.includes('?') ? '&' : '?';
+    script.src = url + separator + 'callback=' + callbackName;
+
     document.body.appendChild(script);
+
+    console.log('JSONP script added:', script.src);
   });
 }
 
