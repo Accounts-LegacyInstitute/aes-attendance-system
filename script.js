@@ -149,13 +149,14 @@ async function verifyStaffMember() {
     console.log('Verifying staff:', url);
 
     const response = await fetch(url, {
-      mode: 'cors',
-      redirect: 'follow',
+      method: 'GET',
+      mode: 'no-cors',
       headers: {
-        'Accept': 'application/json'
+        'Content-Type': 'text/plain'
       }
     });
-    const result = await response.json();
+
+    const result = await fetchWithJSONP(url);
     console.log('Verify result:', result);
 
     if (result.success && result.staff) {
@@ -171,18 +172,34 @@ async function verifyStaffMember() {
   }
 }
 
+function fetchWithJSONP(url) {
+  return new Promise((resolve, reject) => {
+    const callbackName = 'jsonp_callback_' + Date.now() + Math.random().toString(36).substr(2, 5);
+    const script = document.createElement('script');
+
+    window[callbackName] = function (data) {
+      delete window[callbackName];
+      document.body.removeChild(script);
+      resolve(data);
+    };
+
+    script.src = url + '&callback=' + callbackName;
+    script.onerror = function () {
+      delete window[callbackName];
+      document.body.removeChild(script);
+      reject(new Error('JSONP request failed'));
+    };
+
+    document.body.appendChild(script);
+  });
+}
+
 // Get current session status from backend
 async function fetchSessionStatus() {
   if (!staffData || !staffData.name) return;
 
   try {
-    const response = await fetch(url, {
-      mode: 'cors',
-      redirect: 'follow',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
+    const response = await fetch(`${APPS_SCRIPT_URL}?action=checkSession&name=${encodeURIComponent(staffData.name)}`);
     const result = await response.json();
 
     if (result.success) {
@@ -190,11 +207,9 @@ async function fetchSessionStatus() {
       currentSession = result.activeSessionNumber || result.completedSessions || 0;
       updateButtonStates();
 
-      // Check if there's an active session
       if (sessionActive) {
         const element = document.getElementById('lastSession');
         if (element) {
-          // Fetch active session details
           const activeSessionUrl = `${APPS_SCRIPT_URL}?action=getActiveSession&name=${encodeURIComponent(staffData.name)}`;
           const activeRes = await fetch(activeSessionUrl);
           const activeResult = await activeRes.json();
@@ -495,7 +510,7 @@ async function initiatePasskeyVerification() {
 
   // Update UI to loading state
   verifyBtn.disabled = true;
-  verifyBtn.innerHTML = '<div class="verification-spinner" style="background: #007aff; color: white;border: none;padding: 16px 32px;border-radius: 16px;font-family: var(--default-font); font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; width: 100%; max-width: 300px; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);"></div> Verifying...';
+  verifyBtn.innerHTML = 'Verifying...';
   verificationIcon.className = 'bx bx-shield-quarter verification-icon';
 
   try {
