@@ -314,27 +314,40 @@ async function fetchLastSession() {
   if (!staffData || !staffData.name) return;
 
   try {
-    const response = await fetch(url, {
-      mode: 'cors',
-      redirect: 'follow',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-    const result = await response.json();
+    const result = await apiCall('getLastSession', { name: staffData.name });
+    console.log('Last session result:', result);
 
     const element = document.getElementById('lastSession');
     if (!element) return;
 
-    if (result.success && result.lastSession) {
+    if (result && result.success && result.lastSession) {
       const s = result.lastSession;
-      element.textContent = `${s.date} From ${s.timeIn} To ${s.timeOut}`;
+      element.textContent = s.date + ' From ' + s.timeIn + ' To ' + s.timeOut;
     } else {
       element.textContent = 'No previous session recorded';
     }
   } catch (error) {
+    console.error('Error fetching last session:', error);
     const element = document.getElementById('lastSession');
-    if (element) element.textContent = 'Unable to load session data';
+    if (element) element.textContent = 'No previous session recorded';
+  }
+}
+
+async function apiCall(action, params = {}) {
+  let url = `${APPS_SCRIPT_URL}?action=${action}`;
+  for (const [key, value] of Object.entries(params)) {
+    url += `&${key}=${encodeURIComponent(value)}`;
+  }
+
+  console.log('API Call URL:', url);
+
+  try {
+    const result = await fetchWithJSONP(url);
+    console.log('API Result for ' + action + ':', result);
+    return result;
+  } catch (error) {
+    console.error('API Call failed for ' + action + ':', error);
+    return { success: false, error: error.message };
   }
 }
 
