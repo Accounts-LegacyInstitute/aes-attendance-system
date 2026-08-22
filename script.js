@@ -148,14 +148,6 @@ async function verifyStaffMember() {
     const url = `${APPS_SCRIPT_URL}?action=verifyStaff&email=${encodeURIComponent(currentUser.email)}`;
     console.log('Verifying staff:', url);
 
-    const response = await fetch(url, {
-      method: 'GET',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-
     const result = await fetchWithJSONP(url);
     console.log('Verify result:', result);
 
@@ -168,7 +160,7 @@ async function verifyStaffMember() {
     return { success: false, error: result.error || 'Not verified' };
   } catch (error) {
     console.error('Verification error:', error);
-    return { success: false, error: 'Connection error' };
+    return { success: false, error: 'Connection error: ' + error.message };
   }
 }
 
@@ -177,16 +169,28 @@ function fetchWithJSONP(url) {
     const callbackName = 'jsonp_callback_' + Date.now() + Math.random().toString(36).substr(2, 5);
     const script = document.createElement('script');
 
-    window[callbackName] = function (data) {
+    // Add timeout
+    const timeout = setTimeout(() => {
       delete window[callbackName];
-      document.body.removeChild(script);
+      if (script.parentNode) script.parentNode.removeChild(script);
+      reject(new Error('JSONP request timeout'));
+    }, 15000);
+
+    window[callbackName] = function (data) {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
       resolve(data);
     };
 
-    script.src = url + '&callback=' + callbackName;
+    // Check if URL already has query parameters
+    const separator = url.includes('?') ? '&' : '?';
+    script.src = url + separator + 'callback=' + callbackName;
+
     script.onerror = function () {
+      clearTimeout(timeout);
       delete window[callbackName];
-      document.body.removeChild(script);
+      if (script.parentNode) script.parentNode.removeChild(script);
       reject(new Error('JSONP request failed'));
     };
 
