@@ -2,7 +2,7 @@
 const GOOGLE_CLIENT_ID = '137477957854-prdi3poibskfgdi8kdcg2l2sae54e25b.apps.googleusercontent.com';
 // const REDIRECT_URI = 'https://127.0.0.1:3000/main.html';
 const REDIRECT_URI = 'https://accounts-legacyinstitute.github.io/aes-attendance-system/';
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_b87CsFkGK5OCANkofOxVEV5LYowXkE3d25NuXH_oqgKAyyBM21UYjQB7wPX1Lz0/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzY8IRKdSN-nPm8nVAd-DquIWPqRk_xD-jaBJvIM-e-KtU73xng2ECVN8gnNRIQwwBb/exec';
 
 // State management
 let currentUser = null;
@@ -595,7 +595,7 @@ function showVerificationSuccess() {
   modal.innerHTML = `
     <div class="modal-content verification-modal">
       <h2 class="modal-title" style="color: #8cb300;">✓ Identity Verified</h2>
-      <p class="modal-description">Your identity has been successfully verified. Welcome back to the Attendance System.</p>
+      <p class="modal-description">Your identity has been successfully verified. Welcome back to the Attendance System at the Legacy Institute.</p>
       <div class="animation-container">
         <i class='bx bx-check-shield verification-icon success'></i>
       </div>
@@ -690,7 +690,7 @@ function handleSkipVerification() {
 
   modal.innerHTML = `
         <div class="modal-content verification-modal">
-            <h2 class="modal-title" style="color: #ff9500;">⚠️ Security Warning</h2>
+            <h2 class="modal-title" style="color: #ff9500;">Security Warning</h2>
             <p class="modal-description">Skipping passkey verification will log you out. You'll need to sign in with Google again to access the system.</p>
             
             <div class="animation-container">
@@ -731,7 +731,7 @@ function renderPasskeyRegistration() {
   return `
         <div class="modal-content">
             <h2 class="modal-title">Register a Passkey</h2>
-            <p class="modal-description">Secure your attendance system access with a device passkey. This additional verification layer ensures only you can access your session records and maintains enterprise-grade security for your attendance data.</p>
+            <p class="modal-description">Secure your attendance system access with a device passkey. This additional verification layer ensures only you can access your session records and maintain security for your attendance data.</p>
             
             <div class="animation-container" id="animationContainer">
                 <img src="${PASSKEY_GIFS[0]}" alt="Passkey Setup" class="passkey-gif active" id="gif1">
@@ -878,11 +878,11 @@ function showPasskeySetupSuccess() {
   const modal = document.getElementById('passkeyModal');
   modal.innerHTML = `
         <div class="modal-content">
-            <h2 class="modal-title" style="color: #34c759;">✓ Passkey Registered</h2>
+            <h2 class="modal-title" style="color: #8cb300;">Passkey Registered</h2>
             <p class="modal-description">Your device passkey has been successfully registered. You'll use this to verify your identity each time you access the attendance system.</p>
             
             <div class="animation-container">
-                <i class='bx bx-check-circle' style="font-size: 200px; color: #34c759; animation: zoomIn 0.5s ease;"></i>
+                <i class='bx bx-check-circle' style="font-size: 200px; color: #8cb300; animation: zoomIn 0.5s ease;"></i>
             </div>
             
             <button class="passkey-btn" id="continueToAppBtn">Continue to Dashboard</button>
@@ -1005,7 +1005,7 @@ function renderLoginScreen() {
   return `
         <div class="login-screen">
             <h1 id="timedGreeting">${getTimedGreeting()}!</h1>
-            <p class="description">Welcome to the Automated Attendance System with precise session tracking and comprehensive time management solutions.</p>
+            <p class="description">Welcome to the Automated Attendance System with precise session tracking and comprehensive time management solution.</p>
             <p class="sub-description">Please authenticate with your Google account to initiate session tracking and update your attendance records.</p>
             <button class="google-login-btn" id="googleLoginBtn">
                 <img src="https://www.google.com/favicon.ico" alt="Google Logo" 
@@ -1050,7 +1050,7 @@ function renderDashboardScreen() {
 
           <div class="icon-row">
             <div class="icon-box" id="logoutBtn"><i class='bx bx-log-out'></i><text>Logout</text></div>
-            <div class="icon-box" id="recentLogBtn"><i class='ri-information-line'></i><text>Recent Log</text></div>
+            <div class="icon-box" id="recentLogBtn"><i class='ri-information-line'></i><text>Session Log</text></div>
             <div class="icon-box" id="myActivityBtn"><i class='ri-shield-user-line'></i><text>My Activity</text></div>
             <div class="icon-box" id="myAccountBtn"><i class='ri-google-fill'></i><text>My Account</text></div>
           </div>
@@ -1342,8 +1342,8 @@ function showSessionModal(result) {
   overlay.innerHTML = `
     <div style="background: white; border-radius: 20px; padding: 25px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; animation: slideUpModal 0.3s ease;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3 style="font-family: var(--default-font); font-size: 20px; color: #1e293b;">
-          <i class='bx bx-history' style="color: #1a73e8; margin-right: 6px; vertical-align: middle;"></i>
+        <h3 style="font-family: var(--default-font); font-size: 20px; color: #28282a;">
+          <i class='bx bx-history' style="color: #8cb300; margin-right: 6px; vertical-align: middle;"></i>
           Recent Sessions
         </h3>
         <button onclick="this.closest('.custom-modal-overlay').remove()" style="background: #f1f5f9; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 18px; color: #64748b; display: flex; align-items: center; justify-content: center;">
@@ -1352,7 +1352,7 @@ function showSessionModal(result) {
       </div>
       ${sessionsHtml}
       <div style="text-align: center; margin-top: 15px;">
-        <button onclick="this.closest('.custom-modal-overlay').remove()" style="background: #1a73e8; color: white; border: none; padding: 10px 30px; border-radius: 10px; font-size: 14px; cursor: pointer; font-family: var(--default-font);">Close</button>
+        <button onclick="this.closest('.custom-modal-overlay').remove()" style="background: #8cb300; color: #282826; border: none; padding: 10px 30px; border-radius: 10px; font-size: 14px; cursor: pointer; font-family: var(--default-font);">Close</button>
       </div>
     </div>
   `;
@@ -1381,7 +1381,7 @@ function showCustomModal(title, contentHtml) {
     <div style="background: white; border-radius: 20px; padding: 25px; max-width: 400px; width: 90%; text-align: center;">
       <h3 style="font-family: var(--default-font); font-size: 18px; color: #1e293b; margin-bottom: 15px;">${title}</h3>
       ${contentHtml}
-      <button onclick="this.closest('.custom-modal-overlay').remove()" style="background: #1a73e8; color: white; border: none; padding: 10px 30px; border-radius: 10px; font-size: 14px; cursor: pointer; margin-top: 15px; font-family: var(--default-font);">Close</button>
+      <button onclick="this.closest('.custom-modal-overlay').remove()" style="background: #8cb300; color: #2b2c27; border: none; padding: 10px 30px; border-radius: 10px; font-size: 14px; cursor: pointer; margin-top: 15px; font-family: var(--default-font);">Close</button>
     </div>
   `;
 
