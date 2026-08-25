@@ -59,7 +59,7 @@
                onerror="this.src='https://via.placeholder.com/50/8cb300/ffffff?text=LI'">
           <div style="flex: 1;">
             <h3 style="font-size: 18px; color: #1e293b; margin: 0; font-weight: 700;">Install Attendance System</h3>
-            <p style="font-size: 13px; color: #64748b; margin: 2px 0 0;">Legacy Institute</p>
+            <p style="font-size: 13px; color: #64748b; margin: 2px 0 0;">The Legacy Institute</p>
           </div>
           <button id="closeInstallPopup" 
                   style="background: #f1f5f9; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; color: #64748b; flex-shrink: 0;">
@@ -79,7 +79,7 @@
               <span style="color: #8cb300; font-size: 16px;">✓</span> Quick access from home screen
             </li>
             <li style="padding: 5px 0; font-size: 13px; color: #64748b; display: flex; align-items: center; gap: 6px;">
-              <span style="color: #8cb300; font-size: 16px;">✓</span> Offline support
+              <span style="color: #8cb300; font-size: 16px;">✓</span> Smooth Experience
             </li>
           </ul>
         </div>
