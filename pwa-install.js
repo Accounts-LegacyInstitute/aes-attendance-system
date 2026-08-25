@@ -1,30 +1,30 @@
 // PWA Installation Logic for Attendance System
-(function() {
+(function () {
   let deferredPrompt = null;
   let isInstalled = false;
-  
+
   // Check if app is already installed
-  if (window.matchMedia('(display-mode: standalone)').matches || 
-      window.navigator.standalone === true) {
+  if (window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true) {
     isInstalled = true;
   }
-  
+
   // Listen for install prompt
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    
+
     if (!isInstalled) {
       setTimeout(() => showInstallPopup(), 3000);
     }
   });
-  
+
   // Show install popup
   function showInstallPopup() {
     // Remove any existing popup
     const existingPopup = document.getElementById('installPopupOverlay');
     if (existingPopup) existingPopup.remove();
-    
+
     const popup = document.createElement('div');
     popup.id = 'installPopupOverlay';
     popup.style.cssText = `
@@ -42,7 +42,7 @@
       animation: fadeInOverlay 0.3s ease;
       padding: 20px;
     `;
-    
+
     popup.innerHTML = `
       <div style="
         background: white;
@@ -54,7 +54,7 @@
         box-shadow: 0 20px 60px rgba(0,0,0,0.3);
       ">
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
-          <img src="/aes-attendance-system/icons/icon-96x96.png" alt="App Icon" 
+          <img src="https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-96x96.png?raw=true" alt="App Icon" 
                style="width: 50px; height: 50px; border-radius: 12px;"
                onerror="this.src='https://via.placeholder.com/50/8cb300/ffffff?text=LI'">
           <div style="flex: 1;">
@@ -90,9 +90,9 @@
         </button>
       </div>
     `;
-    
+
     document.body.appendChild(popup);
-    
+
     // Add keyframes if not exists
     if (!document.getElementById('pwaKeyframes')) {
       const style = document.createElement('style');
@@ -109,18 +109,18 @@
       `;
       document.head.appendChild(style);
     }
-    
+
     // Close button
     popup.querySelector('#closeInstallPopup').addEventListener('click', () => {
       popup.remove();
     });
-    
+
     // Install button
     popup.querySelector('#installAppBtn').addEventListener('click', async () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
         const result = await deferredPrompt.userChoice;
-        
+
         if (result.outcome === 'accepted') {
           deferredPrompt = null;
           popup.remove();
@@ -131,18 +131,18 @@
         console.log('Install prompt not available');
       }
     });
-    
+
     // Close on overlay click
     popup.addEventListener('click', (e) => {
       if (e.target === popup) popup.remove();
     });
   }
-  
+
   // Check if already installed
   if (isInstalled) {
     console.log('App is running in standalone mode');
   }
-  
+
   // Register service worker
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
