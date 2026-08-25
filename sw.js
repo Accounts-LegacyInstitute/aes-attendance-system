@@ -4,12 +4,12 @@ const CORE_ASSETS = [
     'https://accounts-legacyinstitute.github.io/aes-attendance-system/',
     'https://accounts-legacyinstitute.github.io/aes-attendance-system/offline.html',
     'https://accounts-legacyinstitute.github.io/aes-attendance-system/manifest.json',
-    'https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-72x72.png?raw=true',
-    'https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-96x96.png?raw=true',
-    'https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-144x144.png?raw=true',
-    'https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-192x192.png?raw=true',
-    'https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-512x512.png?raw=true',
-    'https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-maskable-icon-512x512.png?raw=true'
+    'https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-72x72_oi2hpm.png',
+    'https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-96x96_kvvyxy.png',
+    'https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-144x144_iyhunh.png',
+    'https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-192x192_xvmkoj.png',
+    'https://res.cloudinary.com/dhkswq6td/image/upload/v1787643945/li-attendance-icon-512x512_bqscnk.png',
+    'https://res.cloudinary.com/dhkswq6td/image/upload/v1787643946/li-attendance-maskable-icon-512x512_pjzc3v.png'
 ];
 
 // Install event - cache core assets
@@ -100,8 +100,8 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
     const options = {
         body: event.data ? event.data.text() : 'New notification from Attendance System',
-        icon: 'https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-192x192.png?raw=true',
-        badge: 'https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-96x96.png?raw=true',
+        icon: 'https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-192x192_xvmkoj.png',
+        badge: 'https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-96x96_kvvyxy.png',
         vibrate: [200, 100, 200],
         data: { url: 'https://accounts-legacyinstitute.github.io/aes-attendance-system/' }
     };

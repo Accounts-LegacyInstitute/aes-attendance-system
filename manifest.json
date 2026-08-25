@@ -20,55 +20,55 @@
     ],
     "icons": [
         {
-            "src": "https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-72x72.png?raw=true",
+            "src": "https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-72x72_oi2hpm.png",
             "sizes": "72x72",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-96x96.png?raw=true",
+            "src": "https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-96x96_kvvyxy.png",
             "sizes": "96x96",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-144x144.png?raw=true",
+            "src": "https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-144x144_iyhunh.png",
             "sizes": "128x128",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-144x144.png?raw=true",
+            "src": "https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-144x144_iyhunh.png",
             "sizes": "144x144",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-192x192.png?raw=true",
+            "src": "https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-192x192_xvmkoj.png",
             "sizes": "152x152",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-192x192.png?raw=true",
+            "src": "https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-192x192_xvmkoj.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-512x512.png?raw=true",
+            "src": "https://res.cloudinary.com/dhkswq6td/image/upload/v1787643945/li-attendance-icon-512x512_bqscnk.png",
             "sizes": "384x384",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-512x512.png?raw=true",
+            "src": "https://res.cloudinary.com/dhkswq6td/image/upload/v1787643945/li-attendance-icon-512x512_bqscnk.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-maskable-icon-512x512.png?raw=true",
+            "src": "https://res.cloudinary.com/dhkswq6td/image/upload/v1787643946/li-attendance-maskable-icon-512x512_pjzc3v.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
@@ -82,7 +82,7 @@
             "url": "https://accounts-legacyinstitute.github.io/aes-attendance-system/?action=start",
             "icons": [
                 {
-                    "src": "https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-96x96.png?raw=true",
+                    "src": "https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-96x96_kvvyxy.png",
                     "sizes": "96x96"
                 }
             ]
@@ -94,7 +94,7 @@
             "url": "https://accounts-legacyinstitute.github.io/aes-attendance-system/?action=sessions",
             "icons": [
                 {
-                    "src": "https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-96x96.png?raw=true",
+                    "src": "https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-96x96_kvvyxy.png",
                     "sizes": "96x96"
                 }
             ]

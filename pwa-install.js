@@ -54,7 +54,7 @@
         box-shadow: 0 20px 60px rgba(0,0,0,0.3);
       ">
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
-          <img src="https://github.com/Accounts-LegacyInstitute/aes-attendance-system/blob/main/attendance-system-icons/li-attendance-icon-96x96.png?raw=true" alt="App Icon" 
+          <img src="https://res.cloudinary.com/dhkswq6td/image/upload/v1787643944/li-attendance-icon-96x96_kvvyxy.png" alt="App Icon" 
                style="width: 50px; height: 50px; border-radius: 12px;"
                onerror="this.src='https://via.placeholder.com/50/8cb300/ffffff?text=LI'">
           <div style="flex: 1;">

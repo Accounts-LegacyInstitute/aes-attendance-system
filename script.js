@@ -122,7 +122,7 @@ function showLoadingScreen(message) {
   if (container) {
     container.innerHTML = `
             <div class="login-screen">
-                <h2 style="color: white; font-family: var(--default-font);">${message || 'Loading...'}</h2>
+                <h2 style="color: #658200; font-family: var(--default-font);">${message || 'Loading...'}</h2>
                 <div class="verification-spinner" style="margin-top: 20px;"></div>
             </div>
         `;
