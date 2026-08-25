@@ -10,7 +10,7 @@
 }
 
 body {
-  background: linear-gradient(135deg, #8cb300 0%, #6d8b00 100%);
+  background: #e2ebe8;
   background-repeat: no-repeat;
   background-size: cover;
   display: flex;
@@ -63,7 +63,7 @@ body {
 .login-screen .description {
   font-family: var(--default-font);
   font-size: 20px;
-  color: #3e3e3e;
+  color: #8cb300;
   margin-bottom: 15px;
   line-height: 1.5;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
@@ -72,7 +72,7 @@ body {
 .login-screen .sub-description {
   font-family: var(--default-font);
   font-size: 18px;
-  color: #595959;
+  color: #8cb300;
   margin-bottom: 40px;
   line-height: 1.5;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
@@ -126,7 +126,7 @@ body {
 .time-block p {
   font-family: var(--default-font);
   font-size: 20px;
-  color: #555;
+  color: #8cb300;
   margin-bottom: 40px;
 }
 
@@ -141,13 +141,13 @@ body {
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  border: 4px solid #333;
+  border: 4px solid #8cb300;
   object-fit: cover;
 }
 
 .profile h2 {
   font-family: var(--default-font);
-  color: #454545;
+  color: #8cb300;
   margin-top: 10px;
   font-size: 32px;
   font-weight: 300;
@@ -176,11 +176,9 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 38px;
-  color: #4b4a4a;
+  color: #8cb300;
   font-family: var(--default-font);
   gap: 5px;
-  border: 3px solid hsl(0deg 0% 41.56% / 30%);
-  background: hsl(0deg 0% 0% / 10%);
   backdrop-filter: blur(2px);
   box-shadow: inset 0 0 8px 1px hsl(0deg 0% 55.44% / 50%);
   cursor: pointer;
@@ -208,7 +206,7 @@ body {
 .session-info p {
   font-family: var(--default-font);
   font-size: 16px;
-  color: #3e3e3e;
+  color: #8cb300;
   margin-bottom: 20px;
 }
 
@@ -304,6 +302,8 @@ button {
   border: none;
   border-radius: 10px;
   background: #444444;
+  transform: translateX(-50%);
+  z-index: 100;
 }
 
 @keyframes slideUpModal {
@@ -338,7 +338,7 @@ button {
 .modal-description {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 16px;
-  color: #666;
+  color: #8cb300;
   margin-bottom: 32px;
   line-height: 1.5;
   max-width: 380px;
@@ -420,8 +420,8 @@ button {
 
 /* Passkey Button */
 .passkey-btn {
-  background: #007aff;
-  color: white;
+  background: #8cb300;
+  color: rgb(32, 32, 32);
   border: none;
   padding: 16px 32px;
   border-radius: 16px;
@@ -436,7 +436,7 @@ button {
 }
 
 .passkey-btn:hover {
-  background: #0051d5;
+  background: #688400;
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4);
 }
@@ -472,7 +472,7 @@ button {
   width: 60px;
   height: 60px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #007aff;
+  border-top: 4px solid #8cb300;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 20px auto;
@@ -480,12 +480,12 @@ button {
 
 .verification-icon {
   font-size: 180px;
-  color: #007aff;
+  color: #8cb300;
   animation: pulse 2s infinite;
 }
 
 .verification-icon.success {
-  color: #34c759;
+  color: #8cb300;
   animation: none;
 }
 
@@ -508,14 +508,14 @@ button {
 .skip-text {
   margin-top: 20px;
   font-size: 14px;
-  color: #8e8e93;
+  color: #8cb300;
   cursor: pointer;
   text-decoration: underline;
   transition: color 0.2s;
 }
 
 .skip-text:hover {
-  color: #007aff;
+  color: #607b00;
 }
 
 .attempts-text {
@@ -631,6 +631,7 @@ button {
 
 @media (max-width: 400px) {
   .container {
+    height: auto;
     border-radius: 0;
   }
 
